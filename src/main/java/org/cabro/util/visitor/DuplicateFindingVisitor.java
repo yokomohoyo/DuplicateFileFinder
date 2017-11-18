@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Gets information about a list of files
  */
-public class SizeVisitor implements FileVisitor<Path> {
+public class DuplicateFindingVisitor implements FileVisitor<Path> {
 
     private static final String DEFAULT_HASH = "MD5";
 
@@ -27,7 +27,7 @@ public class SizeVisitor implements FileVisitor<Path> {
     private Set<Long> fileSizes;
     private Set<byte[]> hashes;
 
-    public SizeVisitor () {
+    public DuplicateFindingVisitor() {
         fileCount = 0;
         directoryCount = 0;
         hashDuplicates = new ArrayList<>();
@@ -36,19 +36,16 @@ public class SizeVisitor implements FileVisitor<Path> {
         hashes = new HashSet<>();
     }
 
-    public void printDuplicates() {
-        System.out.println("Duplicate Files:");
+    public String printDuplicates() {
+        StringBuffer rv = new StringBuffer();
+        List<Path> finalDuplicateList = new ArrayList<>(sizeDuplicates);
+        finalDuplicateList.addAll(hashDuplicates);
 
-        StringBuffer dupes = new StringBuffer();
-        for (Path dupe : sizeDuplicates) {
-            dupes.append(dupe.toAbsolutePath() + System.lineSeparator());
+        for (Path dupe : finalDuplicateList) {
+            rv.append(dupe.toAbsolutePath() + System.lineSeparator());
         }
 
-        for (Path dupe : hashDuplicates) {
-            dupes.append(dupe.toAbsolutePath() + System.lineSeparator());
-        }
-
-        System.out.println(dupes);
+        return rv.toString();
     }
 
     @Override
@@ -71,10 +68,11 @@ public class SizeVisitor implements FileVisitor<Path> {
                 try {
                     md = MessageDigest.getInstance(DEFAULT_HASH);
                 } catch (NoSuchAlgorithmException nsae) {
-                    System.out.println("Unable to set this algorithm - please verify which algorithms are supported on this system.");
+                    nsae.printStackTrace();
+                    System.exit(1);
                 }
 
-                byte[] h = md.digest(IOUtils.toByteArray(new FileInputStream(file.toFile())));
+                byte[] h = md.digest(IOUtils.toByteArray(new FileInputStream(file.toFile()), Integer.valueOf((int)(long)(attrs.size() * .10))));
 
                 // Try adding it, and if it returns something then the key was used and it's returning the value
                 if (!hashes.add(h)) {

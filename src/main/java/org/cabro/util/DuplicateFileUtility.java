@@ -1,7 +1,7 @@
 package org.cabro.util;
 
 import org.apache.commons.cli.*;
-import org.cabro.util.visitor.SizeVisitor;
+import org.cabro.util.visitor.DuplicateFindingVisitor;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -80,11 +80,11 @@ public class DuplicateFileUtility {
                 alg = DEFAULT_HASH;
             }
 
-            SizeVisitor visitor = new SizeVisitor();
+            DuplicateFindingVisitor visitor = new DuplicateFindingVisitor();
             Files.walkFileTree(Paths.get(p), visitor);
-            //println("Number of files processed: " + visitor.fileCount);
-            //println("Number of directories processed: " + visitor.directoryCount);
-            visitor.printDuplicates();
+            println(visitor.printDuplicates());
+            println("Number of files processed: " + visitor.fileCount);
+            println("Number of directories processed: " + visitor.directoryCount);
             System.exit(EXIT_CODE_NORMAL);
 
         }
