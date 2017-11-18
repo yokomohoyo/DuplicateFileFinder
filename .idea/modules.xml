@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DuplicateFileUtility.iml" filepath="$PROJECT_DIR$/.idea/modules/DuplicateFileUtility.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_main.iml" filepath="$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_main.iml" group="DuplicateFileUtility" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_test.iml" filepath="$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_test.iml" group="DuplicateFileUtility" />
+    </modules>
+  </component>
+</project>
