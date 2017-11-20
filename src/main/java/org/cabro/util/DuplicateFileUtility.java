@@ -1,18 +1,27 @@
 package org.cabro.util;
 
 import org.apache.commons.cli.*;
-import org.cabro.util.visitor.DuplicateFindingVisitor;
+import org.apache.commons.io.IOUtils;
+import org.cabro.util.visitor.HashingFileVisitor;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Helps find duplicate files using a couple of different
  * hash types. Geared for CLI usage at this time.
  *
- * @author Phil Miller <phil_miller@msn.com>
+ * @author Phil
  */
 public class DuplicateFileUtility {
     private static final Integer EXIT_CODE_NORMAL = 0;
@@ -22,7 +31,17 @@ public class DuplicateFileUtility {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 
     // Default Hashing Algorithm
-    private static  final String DEFAULT_HASH = "MD5";
+    private static final String DEFAULT_HASH = "MD5";
+    private static MessageDigest md = null;
+
+    static {
+        try {
+            md = MessageDigest.getInstance(DEFAULT_HASH);
+        } catch (NoSuchAlgorithmException nsae) {
+            println("Unable to get requested algorithm");
+            System.exit(EXIT_CODE_ERROR);
+        }
+    }
 
     /**
      * Main Function
@@ -31,16 +50,20 @@ public class DuplicateFileUtility {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
+        long startTime = System.currentTimeMillis();
 
         // Being initialize CLI
         Options options = new Options();
-        options.addOption("p", true, "The path to scan for hashDuplicates");
-        options.addOption("a", true ,"Select the hashing algorithm to use [SHA1|MD5|SHA256]");
-        options.addOption("c", true ,"Copies the de-duplicated files to this target directory.");
+        options.addOption("p", true, "The path to scan for duplicate files. Prints the nth file found to STDOUT");
+        options.addOption("o", true ,"Find duplicate of this file (Must indicate haystack)");
+        options.addOption("s", true ,"The path to find the needle file in -o");
 
         // Help and troubleshooting
         options.addOption("h", false, "Print some helpful text");
         options.addOption("t", false, "Display current time and exit");
+
+        //TODO
+        //options.addOption("c", true ,"Copies the de-duplicated files to this target directory.");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
@@ -51,7 +74,6 @@ public class DuplicateFileUtility {
         } catch (ParseException pe) {
             //Unable to parse this noise
             println("Unable to parse the command");
-            System.exit(EXIT_CODE_ERROR);
         }
 
         // See if the user wants some help
@@ -59,35 +81,78 @@ public class DuplicateFileUtility {
             //User wants some help
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("dupe", options);
-            System.exit(EXIT_CODE_NORMAL);
         }
 
         // Print the timestamp and end
         if (cmd.hasOption("t")) {
             //User wants to print the date and end
             println("The time is: " + sdf.format(new Date()));
-            System.exit(EXIT_CODE_NORMAL);
         }
 
         // Get the path for traversing ready
         if (cmd.hasOption("p")) {
             String p = cmd.getOptionValue("p");
-            //List<Path> files = listFiles(p);
 
-            // Hasher
-            String alg = cmd.getOptionValue("a");
-            if (alg == null || alg.equalsIgnoreCase("")) {
-                alg = DEFAULT_HASH;
-            }
+            HashingFileVisitor visitor = new HashingFileVisitor();
 
-            DuplicateFindingVisitor visitor = new DuplicateFindingVisitor();
             Files.walkFileTree(Paths.get(p), visitor);
             println(visitor.printDuplicates());
+            println("---");
             println("Number of files processed: " + visitor.fileCount);
             println("Number of directories processed: " + visitor.directoryCount);
-            System.exit(EXIT_CODE_NORMAL);
-
         }
+
+        // With -o $FILE we need to have a path given with -s
+        if (cmd.hasOption("o")) {
+            // Lets find a duplicate of this particular file
+            String o = cmd.getOptionValue("o");
+            Path f = Paths.get(o);
+
+            MessageDigest md = null;
+            try {
+                md = MessageDigest.getInstance(DEFAULT_HASH);
+            } catch (NoSuchAlgorithmException nsae) {
+                throw new IOException(nsae);
+            }
+
+            Long size = f.toFile().length();
+            String hash = getHash(f, f.toFile().length());
+            List<Path> sizeDupe = Files.walk(Paths.get(cmd.getOptionValue("s")))
+                    .filter(fs -> size.equals(fs.toFile().length()))
+                    .collect(Collectors.toList());
+
+            if (sizeDupe.size() > 0 ) {
+                // Hash the remaining files to verify duplicity
+                for (Path p: sizeDupe) {
+                    String h = getHash(p, p.toFile().length());
+                    if (h.equals(hash))
+                        println(p.toString());
+                }
+            } else {
+                for (Path p : sizeDupe) {
+                    println(p.toString());
+                }
+            }
+        }
+
+        // Print the run duration
+        Double elapsed = ( (double) System.currentTimeMillis() - startTime ) / 1000 ;
+        println("Time elapsed: " + elapsed + "(s)");
+        System.exit(EXIT_CODE_NORMAL);
+    }
+
+    public static String getHash(Path file, long bytes) throws IOException {
+        StringBuffer hash = new StringBuffer();
+
+        // Just read the smaller of 4k bytes or 25% of the total bytes whichever is smaller
+        FileInputStream fis = new FileInputStream(file.toFile());
+        byte[] h = md.digest(
+                IOUtils.toByteArray(fis, Integer.min( (int)(bytes), 4096)));
+        fis.close();
+        for (int i = 0; i < h.length; i++)
+            hash.append(Integer.toString((h[i] & 0xff) + 0x100, 16).substring(1));
+
+        return hash.toString();
     }
 
     public static void println (String message) {
