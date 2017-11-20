@@ -39,6 +39,9 @@ import java.util.stream.Collectors;
  * @author Phil
  */
 public class DuplicateFileUtility {
+    // Default amount of bytes to slurp from file to hash
+    private static final int BYTES_TO_READ = 4096; // 4k
+
     private static final Integer EXIT_CODE_NORMAL = 0;
     private static final Integer EXIT_CODE_ERROR = 1;
 
@@ -72,8 +75,8 @@ public class DuplicateFileUtility {
         // Being initialize CLI
         Options options = new Options();
         options.addOption("p", true, "The path to scan for duplicate files. Prints the nth file found to STDOUT");
-        options.addOption("o", true ,"Find duplicate of this file (Must indicate haystack)");
-        options.addOption("s", true ,"The path to find the needle file in -o");
+        options.addOption("o", true, "Find duplicate of this file (Must indicate haystack)");
+        options.addOption("s", true, "The path to find the needle file in -o");
 
         // Help and troubleshooting
         options.addOption("h", false, "Print some helpful text");
@@ -82,7 +85,7 @@ public class DuplicateFileUtility {
 
 
         //TODO
-        //options.addOption("c", true ,"Copy a de-duplicated list files to this target directory.");
+        options.addOption("c", true ,"Copy a de-duplicated list files to this target directory.");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
@@ -93,6 +96,7 @@ public class DuplicateFileUtility {
         } catch (ParseException pe) {
             //Unable to parse this noise
             println("Unable to parse the command");
+            System.exit(EXIT_CODE_ERROR);
         }
 
         // See if the user wants some help
@@ -119,9 +123,24 @@ public class DuplicateFileUtility {
             HashingFileVisitor visitor = new HashingFileVisitor();
 
             Files.walkFileTree(Paths.get(p), visitor);
+            if (cmd.hasOption("c")) {
+                String destBase = cmd.getOptionValue("c");
+                // Want to copy unique files to the target destination
+                for (Path u : visitor.getUniqueFiles()) {
+                    try {
+                        Path dest = Paths.get(destBase + u.toString().replace(p, ""));
+                        if (verbose)
+                            println("Copying: " + u.toString() + " to: " + dest.toString());
+                        Files.copy(u, dest);
+                    } catch (IOException ioe) {
+                        println("Unable to copy: " + u.toString());
+                    }
+                }
+                println("---");
+            }
+
             println(visitor.printDuplicates());
             if (verbose) {
-                println("---");
                 println("Number of files processed: " + visitor.fileCount);
                 println("Number of directories processed: " + visitor.directoryCount);
             }
@@ -146,9 +165,9 @@ public class DuplicateFileUtility {
                     .filter(fs -> size.equals(fs.toFile().length()))
                     .collect(Collectors.toList());
 
-            if (sizeDupe.size() > 0 ) {
+            if (sizeDupe.size() > 0) {
                 // Hash the remaining files to verify duplicity
-                for (Path p: sizeDupe) {
+                for (Path p : sizeDupe) {
                     String h = getHash(p, p.toFile().length());
                     if (h.equals(hash))
                         println(p.toString());
@@ -157,7 +176,7 @@ public class DuplicateFileUtility {
         }
 
         // Print the run duration if desired
-        Double elapsed = ( (double) System.currentTimeMillis() - startTime ) / 1000 ;
+        Double elapsed = ((double) System.currentTimeMillis() - startTime) / 1000;
         if (verbose)
             println("Time elapsed: " + elapsed + "(s)");
         System.exit(EXIT_CODE_NORMAL);
@@ -169,14 +188,14 @@ public class DuplicateFileUtility {
         // Just read the smaller of 4k bytes or 25% of the total bytes whichever is smaller
         FileInputStream fis = new FileInputStream(file.toFile());
         byte[] h = md.digest(
-                IOUtils.toByteArray(fis, Integer.min( (int)(bytes), 8192)));
+                IOUtils.toByteArray(fis, Integer.min((int) (bytes), BYTES_TO_READ)));
         fis.close();
         for (byte aH : h) hash.append(Integer.toString((aH & 0xff) + 0x100, 16).substring(1));
 
         return hash.toString();
     }
 
-    public static void println (String message) {
+    public static void println(String message) {
         System.out.println(message);
     }
 

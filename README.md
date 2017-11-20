@@ -10,6 +10,7 @@ and if the file is the same size, then it performs an MD5 hash on the first 10% 
 ```
 
 ## Running
+#### Finding Duplicate Files
 ```java
 java -jar build/libs/dupe.jar -p ~/tmp/
 ```

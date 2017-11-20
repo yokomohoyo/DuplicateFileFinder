@@ -49,6 +49,12 @@ public class HashingFileVisitor implements FileVisitor<Path> {
     private final Set<Long> sizes;
     private final Set<String> hashes;
 
+    public Set<Path> getUniqueFiles() {
+        return uniqueFiles;
+    }
+
+    private final Set<Path> uniqueFiles;
+
     public HashingFileVisitor() {
         fileCount = 0;
         directoryCount = 0;
@@ -56,6 +62,7 @@ public class HashingFileVisitor implements FileVisitor<Path> {
         sizeDuplicates = new ArrayList<>();
         hashes = new HashSet<>();
         sizes = new HashSet<>();
+        uniqueFiles = new HashSet<>();
     }
 
     public String printDuplicates() {
@@ -108,6 +115,8 @@ public class HashingFileVisitor implements FileVisitor<Path> {
                             }
                         }
                     }
+                } else {
+                    uniqueFiles.add(file);
                 }
             } catch (FileNotFoundException e) {
                 DuplicateFileUtility.println(file.toString() + ": Not Found");
