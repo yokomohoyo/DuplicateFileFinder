@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64b7bdcb-6273-419e-a974-6bf9e8d5146a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" afterPath="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java" afterPath="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/license.txt" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -32,7 +30,7 @@
     <splitter split-orientation="horizontal" split-proportion="0.4547619">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="HashingFileVisitor.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="HashingFileVisitor.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="225">
@@ -41,6 +39,16 @@
                     <element signature="e#0#4691#0" expanded="true" />
                     <element signature="imports" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="license.txt" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/license.txt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -524,6 +532,7 @@
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HahsingFileVisitor.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" />
+        <option value="$PROJECT_DIR$/license.txt" />
       </list>
     </option>
   </component>
@@ -895,6 +904,14 @@
             <element signature="e#0#4691#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/license.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
