@@ -162,7 +162,7 @@ public class DuplicateFileUtility {
         // Just read the smaller of 4k bytes or 25% of the total bytes whichever is smaller
         FileInputStream fis = new FileInputStream(file.toFile());
         byte[] h = md.digest(
-                IOUtils.toByteArray(fis, Integer.min( (int)(bytes), 4096)));
+                IOUtils.toByteArray(fis, Integer.min( (int)(bytes), 8192)));
         fis.close();
         for (int i = 0; i < h.length; i++)
             hash.append(Integer.toString((h[i] & 0xff) + 0x100, 16).substring(1));
