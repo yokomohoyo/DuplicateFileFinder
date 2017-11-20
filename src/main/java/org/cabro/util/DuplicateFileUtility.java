@@ -136,13 +136,12 @@ public class DuplicateFileUtility {
                         println("Unable to copy: " + u.toString());
                     }
                 }
-                println("---");
-            }
-
-            println(visitor.printDuplicates());
-            if (verbose) {
-                println("Number of files processed: " + visitor.fileCount);
-                println("Number of directories processed: " + visitor.directoryCount);
+            } else {
+                println(visitor.printDuplicates());
+                if (verbose) {
+                    println("Number of files processed: " + visitor.fileCount);
+                    println("Number of directories processed: " + visitor.directoryCount);
+                }
             }
         }
 

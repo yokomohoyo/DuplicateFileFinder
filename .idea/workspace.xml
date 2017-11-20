@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64b7bdcb-6273-419e-a974-6bf9e8d5146a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" afterPath="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java" afterPath="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -36,25 +34,12 @@
           <file leaf-file-name="DuplicateFileUtility.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="279">
-                  <caret line="136" column="0" lean-forward="false" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
+                <state relative-caret-position="380">
+                  <caret line="144" column="13" lean-forward="false" selection-start-line="144" selection-start-column="13" selection-end-line="144" selection-end-column="13" />
                   <folding>
-                    <element signature="e#0#7032#0" expanded="true" />
+                    <element signature="e#0#7040#0" expanded="true" />
                     <element signature="imports" expanded="true" />
                   </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/README.md">
-              <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-                <state split_layout="SPLIT">
-                  <first_editor relative-caret-position="180">
-                    <caret line="12" column="28" lean-forward="false" selection-start-line="12" selection-start-column="28" selection-end-line="12" selection-end-column="28" />
-                    <folding />
-                  </first_editor>
-                  <second_editor />
                 </state>
               </provider>
             </entry>
@@ -542,9 +527,9 @@
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HahsingFileVisitor.java" />
         <option value="$PROJECT_DIR$/license.txt" />
         <option value="$PROJECT_DIR$/LICENSE.md" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -825,7 +810,7 @@
         <state relative-caret-position="2025">
           <caret line="163" column="29" lean-forward="false" selection-start-line="163" selection-start-column="29" selection-end-line="163" selection-end-column="29" />
           <folding>
-            <element signature="e#0#7032#0" expanded="true" />
+            <element signature="e#0#7040#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -860,7 +845,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#7032#0" expanded="true" />
+            <element signature="e#0#7040#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -884,7 +869,7 @@
         <state relative-caret-position="1320">
           <caret line="99" column="55" lean-forward="false" selection-start-line="99" selection-start-column="55" selection-end-line="99" selection-end-column="55" />
           <folding>
-            <element signature="e#0#7032#0" expanded="true" />
+            <element signature="e#0#7040#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -895,7 +880,7 @@
         <state relative-caret-position="120">
           <caret line="8" column="21" lean-forward="false" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
           <folding>
-            <element signature="e#0#7032#0" expanded="true" />
+            <element signature="e#0#7040#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -994,17 +979,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="180">
-            <caret line="12" column="28" lean-forward="false" selection-start-line="12" selection-start-column="28" selection-end-line="12" selection-end-column="28" />
-            <folding />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="249">
@@ -1018,12 +992,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="60">
+            <caret line="4" column="78" lean-forward="false" selection-start-line="4" selection-start-column="78" selection-end-line="4" selection-end-column="78" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="136" column="0" lean-forward="false" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
+        <state relative-caret-position="380">
+          <caret line="144" column="13" lean-forward="false" selection-start-line="144" selection-start-column="13" selection-end-line="144" selection-end-column="13" />
           <folding>
-            <element signature="e#0#7032#0" expanded="true" />
+            <element signature="e#0#7040#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
