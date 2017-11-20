@@ -48,11 +48,6 @@ public class HashingFileVisitor implements FileVisitor<Path> {
     private final List<Path> hashDuplicates;
     private final Set<Long> sizes;
     private final Set<String> hashes;
-
-    public Set<Path> getUniqueFiles() {
-        return uniqueFiles;
-    }
-
     private final Set<Path> uniqueFiles;
 
     public HashingFileVisitor() {
@@ -63,6 +58,10 @@ public class HashingFileVisitor implements FileVisitor<Path> {
         hashes = new HashSet<>();
         sizes = new HashSet<>();
         uniqueFiles = new HashSet<>();
+    }
+
+    public Set<Path> getUniqueFiles() {
+        return uniqueFiles;
     }
 
     public String printDuplicates() {
