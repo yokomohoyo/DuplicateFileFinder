@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64b7bdcb-6273-419e-a974-6bf9e8d5146a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_apache_logging_log4j_log4j_api_2_9_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_apache_logging_log4j_log4j_core_2_9_1.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_test.iml" afterPath="$PROJECT_DIR$/.idea/modules/DuplicateFileUtility_test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" afterPath="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -35,25 +30,15 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf>
-          <file leaf-file-name="DuplicateFileUtility.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="DuplicateFileUtility.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="810">
-                  <caret line="151" column="34" lean-forward="false" selection-start-line="151" selection-start-column="12" selection-end-line="151" selection-end-column="34" />
+                <state relative-caret-position="684">
+                  <caret line="87" column="21" lean-forward="false" selection-start-line="87" selection-start-column="21" selection-end-line="87" selection-end-column="21" />
                   <folding>
-                    <element signature="e#0#7040#0" expanded="true" />
+                    <element signature="e#0#7130#0" expanded="true" />
                     <element signature="imports" expanded="true" />
                   </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/build.gradle">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="540">
-                  <caret line="36" column="1" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="36" selection-end-column="1" />
-                  <folding />
                 </state>
               </provider>
             </entry>
@@ -539,10 +524,10 @@
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HahsingFileVisitor.java" />
         <option value="$PROJECT_DIR$/license.txt" />
         <option value="$PROJECT_DIR$/LICENSE.md" />
-        <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/visitor/HashingFileVisitor.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java" />
       </list>
     </option>
   </component>
@@ -822,7 +807,7 @@
         <state relative-caret-position="2025">
           <caret line="163" column="29" lean-forward="false" selection-start-line="163" selection-start-column="29" selection-end-line="163" selection-end-column="29" />
           <folding>
-            <element signature="e#0#7040#0" expanded="true" />
+            <element signature="e#0#7130#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -856,7 +841,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#7040#0" expanded="true" />
+            <element signature="e#0#7130#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -879,7 +864,7 @@
         <state relative-caret-position="1320">
           <caret line="99" column="55" lean-forward="false" selection-start-line="99" selection-start-column="55" selection-end-line="99" selection-end-column="55" />
           <folding>
-            <element signature="e#0#7040#0" expanded="true" />
+            <element signature="e#0#7130#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -890,7 +875,7 @@
         <state relative-caret-position="120">
           <caret line="8" column="21" lean-forward="false" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
           <folding>
-            <element signature="e#0#7040#0" expanded="true" />
+            <element signature="e#0#7130#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
@@ -1003,22 +988,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="151" column="34" lean-forward="false" selection-start-line="151" selection-start-column="12" selection-end-line="151" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#7040#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
           <caret line="36" column="1" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="36" selection-end-column="1" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cabro/util/DuplicateFileUtility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="87" column="21" lean-forward="false" selection-start-line="87" selection-start-column="21" selection-end-line="87" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#7130#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

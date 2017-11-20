@@ -42,16 +42,18 @@ public class DuplicateFileUtility {
     // Default amount of bytes to slurp from file to hash
     private static final int BYTES_TO_READ = 4096; // 4k
 
+    // Exit Codes
     private static final Integer EXIT_CODE_NORMAL = 0;
     private static final Integer EXIT_CODE_ERROR = 1;
 
     // Date formatter
     private static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 
-    // Default Hashing Algorithm
+    // Default Hashing Algorithm & digest
     private static final String DEFAULT_HASH = "MD5";
     private static MessageDigest md = null;
 
+    // print extra stuff
     private static boolean verbose = false;
 
     static {
@@ -83,8 +85,7 @@ public class DuplicateFileUtility {
         options.addOption("t", false, "Display current time and exit");
         options.addOption("v", false, "Verbose");
 
-
-        //TODO
+        // Cooy only unique files to target directory
         options.addOption("c", true ,"Copy a de-duplicated list files to this target directory.");
 
         CommandLineParser parser = new DefaultParser();
