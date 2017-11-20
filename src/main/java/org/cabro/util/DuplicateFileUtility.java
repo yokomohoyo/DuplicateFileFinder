@@ -49,6 +49,8 @@ public class DuplicateFileUtility {
     private static final String DEFAULT_HASH = "MD5";
     private static MessageDigest md = null;
 
+    private static boolean verbose = false;
+
     static {
         try {
             md = MessageDigest.getInstance(DEFAULT_HASH);
@@ -76,9 +78,11 @@ public class DuplicateFileUtility {
         // Help and troubleshooting
         options.addOption("h", false, "Print some helpful text");
         options.addOption("t", false, "Display current time and exit");
+        options.addOption("v", false, "Verbose");
+
 
         //TODO
-        //options.addOption("c", true ,"Copies the de-duplicated files to this target directory.");
+        //options.addOption("c", true ,"Copy a de-duplicated list files to this target directory.");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
@@ -92,6 +96,10 @@ public class DuplicateFileUtility {
         }
 
         // See if the user wants some help
+        assert cmd != null;
+
+        verbose = cmd.hasOption("v");
+
         if (cmd.hasOption("h")) {
             //User wants some help
             HelpFormatter formatter = new HelpFormatter();
@@ -112,9 +120,11 @@ public class DuplicateFileUtility {
 
             Files.walkFileTree(Paths.get(p), visitor);
             println(visitor.printDuplicates());
-            println("---");
-            println("Number of files processed: " + visitor.fileCount);
-            println("Number of directories processed: " + visitor.directoryCount);
+            if (verbose) {
+                println("---");
+                println("Number of files processed: " + visitor.fileCount);
+                println("Number of directories processed: " + visitor.directoryCount);
+            }
         }
 
         // With -o $FILE we need to have a path given with -s
@@ -143,29 +153,25 @@ public class DuplicateFileUtility {
                     if (h.equals(hash))
                         println(p.toString());
                 }
-            } else {
-                for (Path p : sizeDupe) {
-                    println(p.toString());
-                }
             }
         }
 
-        // Print the run duration
+        // Print the run duration if desired
         Double elapsed = ( (double) System.currentTimeMillis() - startTime ) / 1000 ;
-        println("Time elapsed: " + elapsed + "(s)");
+        if (verbose)
+            println("Time elapsed: " + elapsed + "(s)");
         System.exit(EXIT_CODE_NORMAL);
     }
 
     public static String getHash(Path file, long bytes) throws IOException {
-        StringBuffer hash = new StringBuffer();
+        StringBuilder hash = new StringBuilder();
 
         // Just read the smaller of 4k bytes or 25% of the total bytes whichever is smaller
         FileInputStream fis = new FileInputStream(file.toFile());
         byte[] h = md.digest(
                 IOUtils.toByteArray(fis, Integer.min( (int)(bytes), 8192)));
         fis.close();
-        for (int i = 0; i < h.length; i++)
-            hash.append(Integer.toString((h[i] & 0xff) + 0x100, 16).substring(1));
+        for (byte aH : h) hash.append(Integer.toString((aH & 0xff) + 0x100, 16).substring(1));
 
         return hash.toString();
     }

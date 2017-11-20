@@ -44,10 +44,10 @@ public class HashingFileVisitor implements FileVisitor<Path> {
 
     public Integer fileCount;
     public Integer directoryCount;
-    public List<Path> sizeDuplicates;
-    public List<Path> hashDuplicates;
-    public Set<Long> sizes;
-    private Set<String> hashes;
+    private final List<Path> sizeDuplicates;
+    private final List<Path> hashDuplicates;
+    private final Set<Long> sizes;
+    private final Set<String> hashes;
 
     public HashingFileVisitor() {
         fileCount = 0;
@@ -59,11 +59,11 @@ public class HashingFileVisitor implements FileVisitor<Path> {
     }
 
     public String printDuplicates() {
-        StringBuffer rv = new StringBuffer();
+        StringBuilder rv = new StringBuilder();
 
         if (hashDuplicates.size() > 0) {
             for (Path dupe : hashDuplicates) {
-                rv.append(dupe.toAbsolutePath() + System.lineSeparator());
+                rv.append(dupe.toAbsolutePath()).append(System.lineSeparator());
             }
         } else {
             rv.append("Nothing found");
@@ -120,7 +120,7 @@ public class HashingFileVisitor implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-        System.out.print("Unable to visit " + file.toString());
+        DuplicateFileUtility.println("Unable to visit " + file.toString());
         return FileVisitResult.CONTINUE;
     }
 
