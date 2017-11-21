@@ -22,6 +22,7 @@ import org.cabro.util.visitor.HashingFileVisitor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,11 +78,11 @@ public class DuplicateFileUtility {
         // Being initialize CLI
         Options options = new Options();
         options.addOption("p", true, "The path to scan for duplicate files. Prints the nth file found to STDOUT");
-        options.addOption("o", true, "Find duplicate of this file (Must indicate haystack)");
-        options.addOption("s", true, "The path to find the needle file in -o");
+        options.addOption("n", true, "Find duplicate of this file (needle)");
+        options.addOption("h", true, "The path to find the needle file (haystack)");
 
         // Help and troubleshooting
-        options.addOption("h", false, "Print some helpful text");
+        options.addOption("?", false, "Print some helpful text");
         options.addOption("t", false, "Display current time and exit");
         options.addOption("v", false, "Verbose");
 
@@ -105,16 +106,18 @@ public class DuplicateFileUtility {
 
         verbose = cmd.hasOption("v");
 
-        if (cmd.hasOption("h")) {
+        if (cmd.hasOption("?")) {
             //User wants some help
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("dupe", options);
+            System.exit(EXIT_CODE_NORMAL);
         }
 
         // Print the timestamp and end
         if (cmd.hasOption("t")) {
             //User wants to print the date and end
             println("The time is: " + sdf.format(new Date()));
+            System.exit(EXIT_CODE_NORMAL);
         }
 
         // Get the path for traversing ready
@@ -147,21 +150,13 @@ public class DuplicateFileUtility {
         }
 
         // With -o $FILE we need to have a path given with -s
-        if (cmd.hasOption("o")) {
+        if (cmd.hasOption("n")) {
             // Lets find a duplicate of this particular file
-            String o = cmd.getOptionValue("o");
+            String o = cmd.getOptionValue("n");
             Path f = Paths.get(o);
-
-            MessageDigest md = null;
-            try {
-                md = MessageDigest.getInstance(DEFAULT_HASH);
-            } catch (NoSuchAlgorithmException nsae) {
-                throw new IOException(nsae);
-            }
-
             Long size = f.toFile().length();
             String hash = getHash(f, f.toFile().length());
-            List<Path> sizeDupe = Files.walk(Paths.get(cmd.getOptionValue("s")))
+            List<Path> sizeDupe = Files.walk(Paths.get(cmd.getOptionValue("h")))
                     .filter(fs -> size.equals(fs.toFile().length()))
                     .collect(Collectors.toList());
 
@@ -185,10 +180,15 @@ public class DuplicateFileUtility {
     public static String getHash(Path file, long bytes) throws IOException {
         StringBuilder hash = new StringBuilder();
 
-        // Just read the smaller of 4k bytes or 25% of the total bytes whichever is smaller
+        // Just read the last 4k of the file
         FileInputStream fis = new FileInputStream(file.toFile());
-        byte[] h = md.digest(
-                IOUtils.toByteArray(fis, Integer.min((int) (bytes), BYTES_TO_READ)));
+
+        int fileLength = Math.toIntExact(file.toFile().length());
+        int readLength = Math.min(fileLength, BYTES_TO_READ);
+
+        byte[] fReadBuffer = new byte[fileLength];
+        IOUtils.read( fis, fReadBuffer, fileLength - readLength, readLength );
+        byte[] h = md.digest(fReadBuffer); //IOUtils.toByteArray(fis, Integer.min((int)(bytes * .25), BYTES_TO_READ)));
         fis.close();
         for (byte aH : h) hash.append(Integer.toString((aH & 0xff) + 0x100, 16).substring(1));
 
