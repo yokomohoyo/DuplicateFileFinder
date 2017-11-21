@@ -33,9 +33,9 @@ import java.util.stream.Collectors;
 
 /**
  * Gets information about files it visits to build a list of duplicate files.
- * As it visits files, it first makes a list of file sizes, if it finds files with
- * similar file sizes, it will use a hash in order to distinguish between them. It only
- * hashes part of the file to try to be as efficient as possible.
+ * As it visits files, it first makes a list of file sizeSet, if it finds files with
+ * similar file sizeSet, it will use a hash in order to distinguish between them. It only
+ * md5Set part of the file to try to be as efficient as possible.
  *
  * @author Phil
  *
@@ -45,9 +45,10 @@ public class HashingFileVisitor implements FileVisitor<Path> {
     public Integer fileCount;
     public Integer directoryCount;
     private final List<Path> sizeDuplicates;
+
     private final List<Path> hashDuplicates;
-    private final Set<Long> sizes;
-    private final Set<String> hashes;
+    private final Set<Long> sizeSet;
+    private final Set<String> md5Set;
     private final Set<Path> uniqueFiles;
 
     public HashingFileVisitor() {
@@ -55,8 +56,8 @@ public class HashingFileVisitor implements FileVisitor<Path> {
         directoryCount = 0;
         hashDuplicates = new ArrayList<>();
         sizeDuplicates = new ArrayList<>();
-        hashes = new HashSet<>();
-        sizes = new HashSet<>();
+        md5Set = new HashSet<>();
+        sizeSet = new HashSet<>();
         uniqueFiles = new HashSet<>();
     }
 
@@ -64,12 +65,22 @@ public class HashingFileVisitor implements FileVisitor<Path> {
         return uniqueFiles;
     }
 
+    public List<Path> getHashDuplicates() {
+        return hashDuplicates;
+    }
+
     public String printDuplicates() {
         StringBuilder rv = new StringBuilder();
 
         if (hashDuplicates.size() > 0) {
+            int counter = 1;
             for (Path dupe : hashDuplicates) {
-                rv.append(dupe.toAbsolutePath()).append(System.lineSeparator());
+                if (counter < hashDuplicates.size()) {
+                    rv.append(dupe.toAbsolutePath()).append(System.lineSeparator());
+                } else {
+                    rv.append(dupe.toAbsolutePath());
+                }
+                counter++;
             }
         } else {
             rv.append("Nothing found");
@@ -88,15 +99,13 @@ public class HashingFileVisitor implements FileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (attrs.isRegularFile() && Files.isReadable(file)) {
             try {
-                boolean hasSizeDuplicate = !sizes.add(attrs.size());
-                if (hasSizeDuplicate) {
+                if (!sizeSet.add(attrs.size())) {
                     sizeDuplicates.add(file);
 
                     // Found a size duplicate let's see if it's hash is there and if not add it
-                    String hash = DuplicateFileUtility.getHash(file, attrs.size());
-                    boolean hasCryptoDuplicate = !hashes.add(hash);
+                    String hash = DuplicateFileUtility.getHash(file);
 
-                    if (hasCryptoDuplicate) {
+                    if (!md5Set.add(hash)) {
                         hashDuplicates.add(file);
                     } else {
                         // Lets check a little better before we ignore the fact that this hash wasn't found
@@ -104,22 +113,24 @@ public class HashingFileVisitor implements FileVisitor<Path> {
                                 .filter( s -> s.toFile().length() == attrs.size() )
                                 .collect(Collectors.toList());
 
-                        // Existing file hashes that match the size of this guy
+                        // Existing file md5Set that match the size of this guy
                         for (Path p : o) {
-                            String tHash = DuplicateFileUtility.getHash(p, p.toFile().length());
-                            if (tHash.equals(hash)) {
-                                // There was one in there that was duplicated so lets add it so
-                                // we don't have to do this again
-                                hashDuplicates.add(file);
+                            if (!p.equals(file)) {
+                                String tHash = DuplicateFileUtility.getHash(p);
+                                if (tHash.equals(hash)) {
+                                    // There was one in there that was duplicated so lets add it so
+                                    // we don't have to do this again
+                                    hashDuplicates.add(file);
+                                }
                             }
                         }
                     }
-                } else {
-                    uniqueFiles.add(file);
                 }
             } catch (FileNotFoundException e) {
                 DuplicateFileUtility.println(file.toString() + ": Not Found");
             }
+
+            uniqueFiles.add(file);
         }
 
         fileCount++;

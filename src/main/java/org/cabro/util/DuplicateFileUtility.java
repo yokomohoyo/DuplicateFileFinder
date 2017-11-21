@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class DuplicateFileUtility {
     // Default amount of bytes to slurp from file to hash
-    private static final int BYTES_TO_READ = 4096; // 4k
+    private static final int BYTES_TO_READ = 8192; // 8k
 
     // Exit Codes
     private static final Integer EXIT_CODE_NORMAL = 0;
@@ -86,7 +86,10 @@ public class DuplicateFileUtility {
         options.addOption("v", false, "Verbose");
 
         // Cooy only unique files to target directory
-        options.addOption("c", true ,"Copy a de-duplicated list files to this target directory.");
+        options.addOption("c", true ,"Copy a de-duplicated list files to this target directory");
+
+        // Print unique files to stdout
+        options.addOption("u", false ,"Print a list of unique files found in this path");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
@@ -127,6 +130,13 @@ public class DuplicateFileUtility {
 
             Files.walkFileTree(Paths.get(p), visitor);
 
+            if (cmd.hasOption("u")) {
+                for(Path u : visitor.getUniqueFiles()) {
+                    println(u.toString());
+                }
+                System.exit(EXIT_CODE_NORMAL);
+            }
+
             // Want to copy unique files found in this path to the target destination
             if (cmd.hasOption("c")) {
                 String destBase = cmd.getOptionValue("c");
@@ -143,6 +153,8 @@ public class DuplicateFileUtility {
             } else {
                 println(visitor.printDuplicates());
                 if (verbose) {
+                    println("-----");
+                    println("Number of duplicates files found: " + visitor.getHashDuplicates().size());
                     println("Number of files processed: " + visitor.fileCount);
                     println("Number of directories processed: " + visitor.directoryCount);
                 }
@@ -152,20 +164,21 @@ public class DuplicateFileUtility {
         // Find a needle in a haystack
         if (cmd.hasOption("n")) {
             // Lets find a duplicate of this particular file
-            String o = cmd.getOptionValue("n");
-            Path f = Paths.get(o);
+            Path f = Paths.get(cmd.getOptionValue("n"));
             Long size = f.toFile().length();
-            String hash = getHash(f, f.toFile().length());
+            String hash = getHash(f);
             List<Path> sizeDupe = Files.walk(Paths.get(cmd.getOptionValue("h")))
-                    .filter(fs -> size.equals(fs.toFile().length()))
+                    .filter(file -> size.equals(file.toFile().length()))
                     .collect(Collectors.toList());
 
             if (sizeDupe.size() > 0) {
                 // Hash the remaining files to verify duplicity
                 for (Path p : sizeDupe) {
-                    String h = getHash(p, p.toFile().length());
-                    if (h.equals(hash))
-                        println(p.toString());
+                    if (!p.equals(f)) {
+                        String h = getHash(p);
+                        if (h.equals(hash))
+                            println(p.toString());
+                    }
                 }
             }
         }
@@ -177,18 +190,19 @@ public class DuplicateFileUtility {
         System.exit(EXIT_CODE_NORMAL);
     }
 
-    public static String getHash(Path file, long bytes) throws IOException {
+    public static String getHash(Path file) throws IOException {
         StringBuilder hash = new StringBuilder();
 
-        // Just read the last 4k of the file
+        // Just read the last 8k of the file
         FileInputStream fis = new FileInputStream(file.toFile());
 
         int fileLength = Math.toIntExact(file.toFile().length());
         int readLength = Math.min(fileLength, BYTES_TO_READ);
+        int offset = fileLength - readLength;
 
         byte[] fReadBuffer = new byte[fileLength];
-        IOUtils.read( fis, fReadBuffer, fileLength - readLength, readLength );
-        byte[] h = md.digest(fReadBuffer); //IOUtils.toByteArray(fis, Integer.min((int)(bytes * .25), BYTES_TO_READ)));
+        IOUtils.read( fis, fReadBuffer, offset, readLength );
+        byte[] h = md.digest(fReadBuffer);
         fis.close();
         for (byte aH : h) hash.append(Integer.toString((aH & 0xff) + 0x100, 16).substring(1));
 

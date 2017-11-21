@@ -1,5 +1,5 @@
 group 'org.cabro.utils'
-version '1.0-SNAPSHOT'
+version '0.2'
 
 buildscript {
     repositories {
@@ -34,4 +34,9 @@ shadowJar {
     baseName = 'dupe'
     classifier = null
     version = null
+}
+
+shadowDistZip {
+    baseName = 'dupe'
+    archiveName baseName+'-'+version+'-bin.zip'
 }
