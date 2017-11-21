@@ -22,7 +22,6 @@ import org.cabro.util.visitor.HashingFileVisitor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -67,7 +66,7 @@ public class DuplicateFileUtility {
     }
 
     /**
-     * Main Function
+     * Meat and potatoes.
      *
      * @param args
      * @throws Exception
@@ -120,16 +119,17 @@ public class DuplicateFileUtility {
             System.exit(EXIT_CODE_NORMAL);
         }
 
-        // Get the path for traversing ready
+        // Crawl a path to find duplicates
         if (cmd.hasOption("p")) {
             String p = cmd.getOptionValue("p");
 
             HashingFileVisitor visitor = new HashingFileVisitor();
 
             Files.walkFileTree(Paths.get(p), visitor);
+
+            // Want to copy unique files found in this path to the target destination
             if (cmd.hasOption("c")) {
                 String destBase = cmd.getOptionValue("c");
-                // Want to copy unique files to the target destination
                 for (Path u : visitor.getUniqueFiles()) {
                     try {
                         Path dest = Paths.get(destBase + u.toString().replace(p, ""));
@@ -149,7 +149,7 @@ public class DuplicateFileUtility {
             }
         }
 
-        // With -o $FILE we need to have a path given with -s
+        // Find a needle in a haystack
         if (cmd.hasOption("n")) {
             // Lets find a duplicate of this particular file
             String o = cmd.getOptionValue("n");
