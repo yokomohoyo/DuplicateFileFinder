@@ -44,48 +44,30 @@ public class HashingFileVisitor implements FileVisitor<Path> {
 
     public Integer fileCount;
     public Integer directoryCount;
-    private final List<Path> sizeDuplicates;
 
-    private final List<Path> hashDuplicates;
+    // Hold the list of files visited for recursive checking
+    private final List<Path> visitLog;
+
+    // Duplicate files found during visit
+    private final List<Path> duplicates;
+
+    // Set for checking uniqueness of file sizes
     private final Set<Long> sizeSet;
+
+    // Set for checking uniqueness of file hashes
     private final Set<String> md5Set;
+
+    // List of unique files found in this haystack
     private final Set<Path> uniqueFiles;
 
     public HashingFileVisitor() {
         fileCount = 0;
         directoryCount = 0;
-        hashDuplicates = new ArrayList<>();
-        sizeDuplicates = new ArrayList<>();
+        duplicates = new ArrayList<>();
+        visitLog = new ArrayList<>();
         md5Set = new HashSet<>();
         sizeSet = new HashSet<>();
         uniqueFiles = new HashSet<>();
-    }
-
-    public Set<Path> getUniqueFiles() {
-        return uniqueFiles;
-    }
-
-    public List<Path> getHashDuplicates() {
-        return hashDuplicates;
-    }
-
-    public String printDuplicates() {
-        StringBuilder rv = new StringBuilder();
-
-        if (hashDuplicates.size() > 0) {
-            int counter = 1;
-            for (Path dupe : hashDuplicates) {
-                if (counter < hashDuplicates.size()) {
-                    rv.append(dupe.toAbsolutePath()).append(System.lineSeparator());
-                } else {
-                    rv.append(dupe.toAbsolutePath());
-                }
-                counter++;
-            }
-        } else {
-            rv.append("Nothing found");
-        }
-        return rv.toString();
     }
 
     @Override
@@ -98,18 +80,26 @@ public class HashingFileVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (attrs.isRegularFile() && Files.isReadable(file)) {
+            if (DuplicateFileUtility.debug)
+                DuplicateFileUtility.println( "(visit) Reading File: " + file.toString());
+            visitLog.add(file);
             try {
                 if (!sizeSet.add(attrs.size())) {
-                    sizeDuplicates.add(file);
+                    if (DuplicateFileUtility.debug)
+                        DuplicateFileUtility.println( "(visit) has the same size as something else" );
 
-                    // Found a size duplicate let's see if it's hash is there and if not add it
+                    // Found a size duplicate let's see if its hash is there and if not add it
                     String hash = DuplicateFileUtility.getHash(file);
+                    if (DuplicateFileUtility.debug)
+                        DuplicateFileUtility.println("(visit) File: " + file.toString() + " has hash of: " + hash);
 
                     if (!md5Set.add(hash)) {
-                        hashDuplicates.add(file);
+                        duplicates.add(file);
+                        if (DuplicateFileUtility.debug)
+                            DuplicateFileUtility.println( "(visit) has the same hash as something else" );
                     } else {
                         // Lets check a little better before we ignore the fact that this hash wasn't found
-                        List<Path> o = sizeDuplicates.stream()
+                        List<Path> o = visitLog.stream()
                                 .filter( s -> s.toFile().length() == attrs.size() )
                                 .collect(Collectors.toList());
 
@@ -120,7 +110,7 @@ public class HashingFileVisitor implements FileVisitor<Path> {
                                 if (tHash.equals(hash)) {
                                     // There was one in there that was duplicated so lets add it so
                                     // we don't have to do this again
-                                    hashDuplicates.add(file);
+                                    duplicates.add(file);
                                 }
                             }
                         }
@@ -128,6 +118,7 @@ public class HashingFileVisitor implements FileVisitor<Path> {
                 }
             } catch (FileNotFoundException e) {
                 DuplicateFileUtility.println(file.toString() + ": Not Found");
+                throw new IOException(e);
             }
 
             uniqueFiles.add(file);
@@ -147,4 +138,37 @@ public class HashingFileVisitor implements FileVisitor<Path> {
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         return FileVisitResult.CONTINUE;
     }
+
+    /**
+     * Prints the output generated during the file visit of this tree
+     *
+     * @return
+     */
+    public String printDuplicates() {
+        StringBuilder rv = new StringBuilder();
+
+        if (duplicates.size() > 0) {
+            int counter = 1;
+            for (Path dupe : duplicates) {
+                if (counter < duplicates.size()) {
+                    rv.append(dupe.toAbsolutePath()).append(System.lineSeparator());
+                } else {
+                    rv.append(dupe.toAbsolutePath());
+                }
+                counter++;
+            }
+        } else {
+            rv.append("Nothing found");
+        }
+        return rv.toString();
+    }
+
+    public Set<Path> getUniqueFiles() {
+        return uniqueFiles;
+    }
+
+    public List<Path> getDuplicates() {
+        return duplicates;
+    }
+
 }

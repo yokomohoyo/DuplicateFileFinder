@@ -54,7 +54,11 @@ public class DuplicateFileUtility {
     private static MessageDigest md = null;
 
     // print extra stuff
-    private static boolean verbose = false;
+    public static boolean verbose = false;
+    public static boolean debug = false;
+
+    // Toggle full file hashing
+    private static boolean READ_WHOLE = false;
 
     static {
         try {
@@ -76,6 +80,7 @@ public class DuplicateFileUtility {
 
         // Being initialize CLI
         Options options = new Options();
+        options.addOption("a", false, "Read the whole file for hashing comparison");
         options.addOption("p", true, "The path to scan for duplicate files. Prints the nth file found to STDOUT");
         options.addOption("n", true, "Find duplicate of this file (needle)");
         options.addOption("h", true, "The path to find the needle file (haystack)");
@@ -84,6 +89,7 @@ public class DuplicateFileUtility {
         options.addOption("?", false, "Print some helpful text");
         options.addOption("t", false, "Display current time and exit");
         options.addOption("v", false, "Verbose");
+        options.addOption("d", false, "Debug");
 
         // Cooy only unique files to target directory
         options.addOption("c", true ,"Copy a de-duplicated list files to this target directory");
@@ -99,14 +105,15 @@ public class DuplicateFileUtility {
             cmd = parser.parse(options, args);
         } catch (ParseException pe) {
             //Unable to parse this noise
-            println("Unable to parse the command");
+            println("Unable to interpret the command ... exiting ...");
             System.exit(EXIT_CODE_ERROR);
         }
 
-        // See if the user wants some help
+        // Make sure we have args
         assert cmd != null;
 
         verbose = cmd.hasOption("v");
+        debug = cmd.hasOption("d");
 
         if (cmd.hasOption("?")) {
             //User wants some help
@@ -125,6 +132,7 @@ public class DuplicateFileUtility {
         // Crawl a path to find duplicates
         if (cmd.hasOption("p")) {
             String p = cmd.getOptionValue("p");
+            READ_WHOLE = cmd.hasOption("a");
 
             HashingFileVisitor visitor = new HashingFileVisitor();
 
@@ -153,8 +161,8 @@ public class DuplicateFileUtility {
             } else {
                 println(visitor.printDuplicates());
                 if (verbose) {
-                    println("-----");
-                    println("Number of duplicates files found: " + visitor.getHashDuplicates().size());
+                    println("");
+                    println("Number of duplicates files found: " + visitor.getDuplicates().size());
                     println("Number of files processed: " + visitor.fileCount);
                     println("Number of directories processed: " + visitor.directoryCount);
                 }
@@ -190,6 +198,13 @@ public class DuplicateFileUtility {
         System.exit(EXIT_CODE_NORMAL);
     }
 
+    /**
+     * Hashing function. Would be better to move to it's own class
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public static String getHash(Path file) throws IOException {
         StringBuilder hash = new StringBuilder();
 
@@ -197,7 +212,15 @@ public class DuplicateFileUtility {
         FileInputStream fis = new FileInputStream(file.toFile());
 
         int fileLength = Math.toIntExact(file.toFile().length());
-        int readLength = Math.min(fileLength, BYTES_TO_READ);
+        int readLength;
+        if (READ_WHOLE) {
+            readLength = fileLength;
+            if (debug)
+                println("(getHash) Reading " + file.toString() + " file: " + fileLength);
+        } else {
+            readLength = Math.min(fileLength, BYTES_TO_READ);
+        }
+
         int offset = fileLength - readLength;
 
         byte[] fReadBuffer = new byte[fileLength];
